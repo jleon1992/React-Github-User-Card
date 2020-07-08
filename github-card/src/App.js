@@ -2,17 +2,19 @@ import React from 'react';
 import './App.css';
 import axios from 'axios'
 import UserCard from './components/UserCard'
-import FollowersList from './components/FollowersList'
-import Follower from './components/Follower'
+// import FollowersList from './components/FollowersList'
+// import Follower from './components/Follower'
 
 class App extends React.Component{
   constructor(){
     super()
     this.state = {
       user: [],
-      followers: []
+      followers: [],
+      followUser: []
     }
   }
+
 
   componentDidMount() {
     axios.get('https://api.github.com/users/jleon1992')
@@ -27,31 +29,42 @@ class App extends React.Component{
         followers: res.data
       })
     })
+    
+    
   }
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   console.log('CDU')
-  //   this.state.followers.map(follower => {
-  //     axios.get(`https://api.github.com/users/${follower.login}`)
-  //     .then(res => {
-  //       console.log(res)
-  //       this.setState({
-  //         user: [...this.state.user, res.data]
-  //       })
-  //     })
-  //   })
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    console.log('CDU')
+    if(this.state.followers !== prevState.followers){
+      this.state.followers.map(follower => {
+        return(
+            axios.get(`https://api.github.com/users/${follower.login}`)
+            .then(res => {
+                const follow = res.data
+                this.setState({
+                  followUser: [...this.state.followUser, follow ]
+                })
+            })
+        )
+    })
+    }
+    
+  }
 
   render(){
+    // console.log(this.state.followUser)
     return(
       <div className="App">
         <UserCard user ={this.state.user} />
     
-            {this.state.followers.map(follower => {
-              return(
-                <Follower follower={follower} />
-              )
-            })}
+           
+            {
+              this.state.followUser.map(user => {
+                return(
+                  <UserCard user={user} />
+                )
+              })
+            }
           </div>
     )
   }

@@ -1,7 +1,6 @@
 import React from 'react'
 
 const UserCard = props => {
-    // console.log(props)
     return(
         <div className="card">
             <img src={props.user.avatar_url} className="img" />
